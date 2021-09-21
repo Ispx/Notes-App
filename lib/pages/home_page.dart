@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:notes_app/models/auth_model.dart';
 import 'package:notes_app/widgets/list_title_widget.dart';
 
 class HomePage extends StatefulWidget {
-  final String title;
-  HomePage(this.title);
+  final AuthModel authModel;
+  HomePage(this.authModel);
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -15,7 +16,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.title,
+          'Notes',
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 22,
@@ -45,85 +46,90 @@ class _HomePageState extends State<HomePage> {
           )
         ],
       ),
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        color: Colors.brown.shade300,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(
-                height: 30,
-              ),
-              Text(
-                'Notes',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 25,
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * .7,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.fromBorderSide(
-                        BorderSide(
-                          width: 5,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                      ),
-                      borderRadius: BorderRadius.circular(
-                        10,
+      body: StreamBuilder<List<String>>(
+          stream: null,
+          builder: (context, snapshot) {
+            return Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              color: Colors.brown.shade300,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Text(
+                      'Notes',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 25,
                       ),
                     ),
-                    child: Scrollbar(
-                      child: ListView.builder(
-                        itemCount: notes.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ListTitleWidget(
-                              title: notes[index],
-                              onTap: () async {
-                                var noteEdited = await Navigator.pushNamed(
-                                  context,
-                                  '/create-note/',
-                                  arguments: notes[index],
-                                );
-
-                                if (noteEdited != null) {
-                                  notes[index] = noteEdited as String;
-                                  setState(() {});
-                                }
-                              },
-                              trailing: IconButton(
-                                onPressed: () {
-                                  notes.removeAt(index);
-                                  setState(() {});
-                                },
-                                icon: Icon(
-                                  Icons.delete,
-                                  color: Colors.red.shade900,
-                                ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * .7,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.fromBorderSide(
+                              BorderSide(
+                                width: 5,
+                                color: Theme.of(context).primaryColor,
                               ),
                             ),
-                          );
-                        },
+                            borderRadius: BorderRadius.circular(
+                              10,
+                            ),
+                          ),
+                          child: Scrollbar(
+                            child: ListView.builder(
+                              itemCount: notes.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ListTitleWidget(
+                                    title: notes[index],
+                                    onTap: () async {
+                                      var noteEdited =
+                                          await Navigator.pushNamed(
+                                        context,
+                                        '/create-note/',
+                                        arguments: notes[index],
+                                      );
+
+                                      if (noteEdited != null) {
+                                        notes[index] = noteEdited as String;
+                                        setState(() {});
+                                      }
+                                    },
+                                    trailing: IconButton(
+                                      onPressed: () {
+                                        notes.removeAt(index);
+                                        setState(() {});
+                                      },
+                                      icon: Icon(
+                                        Icons.delete,
+                                        color: Colors.red.shade900,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
+            );
+          }),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           var newNote = await Navigator.pushNamed(context, '/create-note/');
